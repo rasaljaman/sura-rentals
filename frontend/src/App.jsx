@@ -171,12 +171,20 @@ export default function App() {
       })
     return () => subscription.unsubscribe()
   }, [])
-
   const fetchCars = async () => {
     try {
       setLoading(true)
       const response = await fetch('https://sura-rentals-api.onrender.com/api/cars/')
-      const data = await response.json()
+      let data = await response.json()
+
+      data = data.map(car => ({
+        ...car,
+        image_url: car.image_url ? car.image_url.replace(
+          'https://jdeiyxvvtforxnxjoall.supabase.co', 
+          'https://sura-rentals.vercel.app/supabase-proxy'
+        ) : car.image_url
+      }))
+
       setCars(data)
     } catch (err) {
       console.error("API Error:", err)
@@ -185,6 +193,7 @@ export default function App() {
     }
   }
 
+  
   useEffect(() => {
     fetchCars()
   }, [])
