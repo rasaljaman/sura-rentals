@@ -53,7 +53,7 @@ export default function BookingModal({ isOpen, onClose, car }) {
         status: 'Pending'
       }
 
-      const res = await fetch('http://localhost:8000/api/bookings/', {
+      const res = await fetch('https://sura-rentals-api.onrender.com/api/bookings/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
