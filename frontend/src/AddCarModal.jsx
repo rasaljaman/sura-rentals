@@ -9,15 +9,10 @@ import {
 export default function AddCarModal( {
   isOpen, onClose, onCarAdded
 }) {
-  const [formData,
-    setFormData] = useState( {
-      brand: '', model: '', daily_rate: '', image_url: '', description: '', category: 'Premium'
-    })
+  const [formData, setFormData] = useState({ 
+  brand: '', model: '', daily_rate: '', image_url: '', description: '', category: 'Premium' 
+})
 
-  const [formData,
-    setFormData] = useState( {
-      brand: '', model: '', daily_rate: '', image_url: '', description: ''
-    })
   const [uploadMethod,
     setUploadMethod] = useState('url') // 'url' or 'file'
   const [imageFile,
