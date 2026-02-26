@@ -14,7 +14,7 @@ export default function CarCard({ car, session, fetchCars }) {
     if (!window.confirm(`Are you sure you want to delete the ${car.brand} ${car.model}?`)) return
     setIsDeleting(true)
     try {
-      const res = await fetch(`http://sura-rentals-api.onrender.com/api/cars/${car.id}/`, {
+      const res = await fetch(`https://sura-rentals-api.onrender.com/api/cars/${car.id}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${session.access_token}` }
       })

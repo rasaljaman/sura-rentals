@@ -116,7 +116,7 @@ export default function App() {
   const fetchCars = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://sura-rentals-api.onrender.com/api/cars/')
+      const response = await fetch('https://sura-rentals-api.onrender.com/api/cars/')
       const data = await response.json()
       setCars(data)
     } catch (err) {

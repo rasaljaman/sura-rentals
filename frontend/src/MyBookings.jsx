@@ -12,7 +12,7 @@ export default function MyBookings({ session, cars }) {
 
     const fetchMyBookings = async () => {
       try {
-        const res = await fetch('http://sura-rentals-api.onrender.com/api/bookings/')
+        const res = await fetch('https://sura-rentals-api.onrender.com/api/bookings/')
         const data = await res.json()
         const myData = data.filter(b => b.user_email === session.user.email)
         const sortedData = myData.sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
@@ -34,7 +34,7 @@ export default function MyBookings({ session, cars }) {
     if (!window.confirm("Are you sure you want to cancel this reservation?")) return
 
     try {
-      const res = await fetch(`http://sura-rentals-api.onrender.com/api/bookings/${bookingId}/`, {
+      const res = await fetch(`https://sura-rentals-api.onrender.com/api/bookings/${bookingId}/`, {
         method: 'DELETE'
       })
       
