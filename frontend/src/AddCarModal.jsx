@@ -58,7 +58,7 @@ export default function AddCarModal({ isOpen, onClose, onCarAdded }) {
       // 3. Send the final data (with the URL) to your Django API
       const payload = { ...formData, image_url: finalImageUrl }
       
-      const res = await fetch('http://localhost:8000/api/cars/', {
+      const res = await fetch('http://sura-rentals-api.onrender.com/api/cars/', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

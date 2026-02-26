@@ -23,13 +23,13 @@ export default function CarDetails({ cars, session }) {
   useEffect(() => { window.scrollTo(0, 0) }, [id])
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/reviews/')
+    fetch('http://sura-rentals-api.onrender.com/api/reviews/')
       .then(res => res.json())
       .then(data => { if(Array.isArray(data)) setReviews(data.filter(r => r.car.toString() === id)) })
       .catch(err => console.error(err))
 
     if (session) {
-      fetch('http://localhost:8000/api/wishlists/')
+      fetch('http://sura-rentals-api.onrender.com/api/wishlists/')
         .then(res => res.json())
         .then(data => {
           if(Array.isArray(data)) {
@@ -48,14 +48,14 @@ export default function CarDetails({ cars, session }) {
     setIsLiked(!isLiked)
     try {
       if (!isLiked) {
-        const res = await fetch('http://localhost:8000/api/wishlists/', {
+        const res = await fetch('http://sura-rentals-api.onrender.com/api/wishlists/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ car: car.id, user_email: session.user.email })
         })
         if (res.ok) { const data = await res.json(); setWishlistId(data.id); }
       } else {
-        await fetch(`http://localhost:8000/api/wishlists/${wishlistId}/`, { method: 'DELETE' })
+        await fetch(`http://sura-rentals-api.onrender.com/api/wishlists/${wishlistId}/`, { method: 'DELETE' })
         setWishlistId(null)
       }
     } catch (err) { setIsLiked(!isLiked) }
@@ -65,7 +65,7 @@ export default function CarDetails({ cars, session }) {
     e.preventDefault()
     if (!comment || !session) return
     const payload = { car: car.id, user_email: session.user.email.split('@')[0], rating, text: comment }
-    const res = await fetch('http://localhost:8000/api/reviews/', {
+    const res = await fetch('http://sura-rentals-api.onrender.com/api/reviews/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -95,7 +95,7 @@ export default function CarDetails({ cars, session }) {
 
   const handleDeleteReview = async (reviewId) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/reviews/${reviewId}/`, { method: 'DELETE' })
+      const res = await fetch(`http://sura-rentals-api.onrender.com/api/reviews/${reviewId}/`, { method: 'DELETE' })
       if (res.ok) {
         setReviews(reviews.filter(r => r.id !== reviewId))
         setActiveDeleteId(null)

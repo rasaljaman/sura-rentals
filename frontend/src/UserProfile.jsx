@@ -15,7 +15,7 @@ export default function UserProfile({ session, cars }) {
   useEffect(() => {
     if (session) {
       // Clean fetch without headers
-      fetch('http://localhost:8000/api/wishlists/')
+      fetch('http://sura-rentals-api.onrender.com/api/wishlists/')
         .then(res => res.json())
         .then(data => {
           if(Array.isArray(data)) {
