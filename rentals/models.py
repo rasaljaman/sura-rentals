@@ -7,7 +7,8 @@ class Car(models.Model):
     image_url = models.URLField() # Storing the URL since we will use Supabase for storage
     is_available = models.BooleanField(default=True)
     description = models.TextField(blank=True)
-    
+    category = models.CharField(max_length=50, default='Premium') 
+    created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.brand} {self.model}"
 
