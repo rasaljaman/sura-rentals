@@ -5,12 +5,19 @@ class Car(models.Model):
     model = models.CharField(max_length=50) # e.g., 911 GT3
     daily_rate = models.DecimalField(max_digits=10, decimal_places=2)
     image_url = models.URLField() # Storing the URL since we will use Supabase for storage
+    
+    # --- NEW FIELD ---
+    gallery = models.JSONField(default=list, blank=True) # Stores an array of multiple image URLs
+    # -----------------
+    
     is_available = models.BooleanField(default=True)
     description = models.TextField(blank=True)
     category = models.CharField(max_length=50, default='Premium') 
     created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return f"{self.brand} {self.model}"
+
 
 class Booking(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='bookings')
