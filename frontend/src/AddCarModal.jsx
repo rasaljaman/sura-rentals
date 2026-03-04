@@ -5,6 +5,7 @@ import {
 import {
   supabase
 } from './supabaseClient'
+import imageCompression from 'browser-image-compression'
 
 export default function AddCarModal( {
   isOpen, onClose, onCarAdded
@@ -47,37 +48,44 @@ export default function AddCarModal( {
 
       let finalImageUrl = formData.image_url
 
-      // 2. Handle Device File Upload to Supabase Storage
+            // 2. Handle Device File Upload to Supabase Storage
       if (uploadMethod === 'file' && imageFile) {
-        // Create a unique file name using the current timestamp
-        const fileExt = imageFile.name.split('.').pop()
+        
+        // --- NEW COMPRESSION LOGIC ---
+        const options = {
+          maxSizeMB: 0.5,          // Compress to a maximum of 500KB
+          maxWidthOrHeight: 1280,  // Scale down massive 4K photos to 1280px
+          useWebWorker: true       // Makes compression faster without freezing the screen
+        }
+        
+        // Compress the image before uploading
+        const compressedFile = await imageCompression(imageFile, options)
+        // -----------------------------
+
+        // Create a unique file name
+        const fileExt = compressedFile.name.split('.').pop() || 'jpg'
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-
-        const {
-          error: uploadError
-        } = await supabase.storage
-        .from('car-images')
-        .upload(fileName, imageFile, {
-          cacheControl: '3600',
-          upsert: true
-        })
-
+        
+        // Upload the COMPRESSED file, not the original
+        const { error: uploadError } = await supabase.storage
+          .from('car-images') 
+          .upload(fileName, compressedFile, {
+            cacheControl: '3600',
+            upsert: true 
+          })
 
         if (uploadError) throw new Error("Failed to upload image: " + uploadError.message)
 
         // Get the permanent public URL
-        const {
-          data: {
-            publicUrl
-          }
-        } = supabase.storage
-        .from('car-images')
-        .getPublicUrl(fileName)
+        const { data: { publicUrl } } = supabase.storage
+          .from('car-images')
+          .getPublicUrl(fileName)
 
         finalImageUrl = publicUrl
       } else if (uploadMethod === 'file' && !imageFile) {
         throw new Error("Please select an image file to upload.")
       }
+
 
       // 3. Send the final data (with the URL) to your Django API
       const payload = {
