@@ -21,6 +21,7 @@ import AddCarModal from './AddCarModal'
 import MyBookings from './MyBookings'
 import UserProfile from './UserProfile'
 import CarDetails from './CarDetails'
+import AdminBookings from './AdminBookings'
 
 
 // --- THE MAIN PUBLIC HOMEPAGE COMPONENT ---
@@ -56,18 +57,21 @@ function Home( {
       <nav className="fixed w-full top-0 z-40 bg-[#1c1c1e]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-black tracking-tighter">SURA<span className="text-[#0A84FF]">.</span></Link>
         <div className="flex gap-4 items-center">
-          {isAdmin && (
-            <button
-              onClick={() => setIsAddCarModalOpen(true)}
-              className="text-sm font-bold text-[#0A84FF] bg-[#0A84FF]/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full"
+                    {isAdmin && (
+            <div className="flex items-center gap-2">
+              <Link to="/admin/bookings" className="text-sm font-bold text-white bg-white/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full hover:bg-white/20 transition-all">
+                Manage Bookings
+              </Link>
+              <button 
+                onClick={() => setIsAddCarModalOpen(true)} 
+                className="text-sm font-bold text-[#0A84FF] bg-[#0A84FF]/10 px-3 py-1.5 md:px-4 md:py-2 rounded-full"
               >
-              <span className="md:hidden">+ Add</span>
-              <span className="hidden md:inline">+ Admin: Add Vehicle</span>
-            </button>
-
-
-
+                <span className="md:hidden">+ Add</span>
+                <span className="hidden md:inline">+ Admin: Add Vehicle</span>
+              </button>
+            </div>
           )}
+          
           {session ? (
             <div className="flex items-center gap-4 bg-white/5 px-2 py-1.5 rounded-full border border-white/10">
               <Link to="/bookings" className="text-sm text-gray-300 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-full transition-all hidden md:block">My Bookings</Link>
@@ -198,6 +202,8 @@ export default function App() {
       <Route path="/bookings" element={<MyBookings session={session} cars={cars} />} />
       <Route path="/profile" element={<UserProfile session={session} cars={cars} />} />
       <Route path="/car/:id" element={<CarDetails cars={cars} session={session} />} />
+      <Route path="/admin/bookings" element={<AdminBookings session={session} cars={cars} />} />
+
     </Routes>
   )
 }
