@@ -25,11 +25,16 @@ class Booking(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    pickup_location = models.CharField(max_length=255, default="Not specified")
+    dropoff_location = models.CharField(max_length=255, default="Not specified")
+    pickup_time = models.TimeField(null=True, blank=True)
+    dropoff_time = models.TimeField(null=True, blank=True)
     status = models.CharField(
         max_length=20, 
         choices=[('Pending', 'Pending'), ('Confirmed', 'Confirmed')],
         default='Pending'
     )
+    
     
     def __str__(self):
         return f"Booking for {self.car.model} by {self.user_email}"
