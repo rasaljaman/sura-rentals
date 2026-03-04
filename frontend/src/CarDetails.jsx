@@ -20,6 +20,21 @@ export default function CarDetails({ cars, session }) {
   const [activeDeleteId, setActiveDeleteId] = useState(null)
   const pressTimer = useRef(null)
 
+  // --- IMAGE SLIDER STATE & LOGIC ---
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Combine the images safely. If no gallery exists, fall back to the single image_url
+  const allImages = car?.gallery && car.gallery.length > 0 ? car.gallery : [car?.image_url]
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
+  }
+  // ----------------------------------
+
   useEffect(() => { window.scrollTo(0, 0) }, [id])
 
   useEffect(() => {
@@ -79,13 +94,12 @@ export default function CarDetails({ cars, session }) {
 
   // --- LONG PRESS GESTURE HANDLERS ---
   const handlePressStart = (reviewId, reviewEmail) => {
-    // Only allow them to hold/delete if they wrote it OR if they are the admin
     const isOwner = session && (reviewEmail === session.user.email.split('@')[0])
     const isAdmin = session && (session.user.email === 'rasaljaman15@gmail.com')
     if (!isOwner && !isAdmin) return
 
     pressTimer.current = setTimeout(() => {
-      setActiveDeleteId(reviewId) // Pop open the delete button after 500ms
+      setActiveDeleteId(reviewId)
     }, 500)
   }
 
@@ -108,6 +122,8 @@ export default function CarDetails({ cars, session }) {
   return (
     <div className="min-h-screen bg-[#1c1c1e] text-white pt-24 pb-20 px-6 md:px-12" onClick={() => setActiveDeleteId(null)}>
       <div className="max-w-6xl mx-auto">
+        
+        {/* Header Options */}
         <div className="flex justify-between items-center mb-8">
           <Link to="/" className="bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-full text-sm font-medium transition-colors">← Back to Fleet</Link>
           <motion.button onClick={toggleLike} whileTap={{ scale: 0.8 }} className="p-3 bg-white/5 rounded-full border border-white/10">
@@ -117,10 +133,37 @@ export default function CarDetails({ cars, session }) {
           </motion.button>
         </div>
 
+        {/* --- CAR DETAILS GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-black/40 border border-white/10">
-            <img src={car.image_url} alt={car.model} className="w-full h-full object-cover" />
+          
+          {/* DYNAMIC IMAGE SLIDER */}
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-black/40 border border-white/10 group shadow-2xl">
+            <img src={allImages[currentImageIndex]} alt={car.model} className="w-full h-full object-cover transition-transform duration-700 ease-in-out" />
+            
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-transparent to-transparent opacity-60"></div>
+
+            {/* Slider Controls (Only show if there are multiple images) */}
+            {allImages.length > 1 && (
+              <>
+                <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-[#0A84FF] text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 shadow-lg">
+                  ◀
+                </button>
+                <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-[#0A84FF] text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 shadow-lg">
+                  ▶
+                </button>
+                
+                {/* Indicator Dots */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                  {allImages.map((_, i) => (
+                    <button key={i} onClick={() => setCurrentImageIndex(i)} className={`h-2.5 rounded-full transition-all duration-300 ${i === currentImageIndex ? 'bg-[#0A84FF] w-8 shadow-[0_0_10px_rgba(10,132,255,0.8)]' : 'bg-white/50 w-2.5 hover:bg-white'}`} />
+                  ))}
+                </div>
+              </>
+            )}
           </motion.div>
+
+          {/* TEXT & INFO BLOCK */}
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col justify-center">
             <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-2">{car.brand}</h1>
             <h2 className="text-3xl text-gray-400 font-light mb-6">{car.model}</h2>
@@ -171,11 +214,10 @@ export default function CarDetails({ cars, session }) {
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={rev.id} 
                 className="flex gap-4 relative select-none touch-manipulation"
-                // Long Press Listeners
                 onPointerDown={() => handlePressStart(rev.id, rev.user_email)}
                 onPointerUp={handlePressEnd}
                 onPointerLeave={handlePressEnd}
-                onContextMenu={(e) => e.preventDefault()} // Prevent normal right-click/long press menu on mobile
+                onContextMenu={(e) => e.preventDefault()}
               >
                 <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-gray-400 shrink-0">
                   {rev.user_email[0].toUpperCase()}
