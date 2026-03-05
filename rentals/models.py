@@ -29,13 +29,14 @@ class Booking(models.Model):
     dropoff_location = models.CharField(max_length=255, default="Not specified")
     pickup_time = models.TimeField(null=True, blank=True)
     dropoff_time = models.TimeField(null=True, blank=True)
-    status = models.CharField(
-        max_length=20, 
-        choices=[('Pending', 'Pending'), ('Confirmed', 'Confirmed')],
-        default='Pending'
-    )
-    cancellation_reason = models.CharField(max_length=255, blank=True, null=True)
     
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'), 
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    cancellation_reason = models.CharField(max_length=255, blank=True, null=True)
     
     def __str__(self):
         return f"Booking for {self.car.model} by {self.user_email}"

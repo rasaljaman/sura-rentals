@@ -36,11 +36,19 @@ export default function AdminBookings({ session, cars }) {
 
   const updateStatus = async (id, newStatus, reason = null) => {
     try {
-      const payload = { status: newStatus }
+      // 1. Find the full existing booking object
+      const existingBooking = bookings.find(b => b.id === id)
+      
+      // 2. Create a full payload, overriding only the status and reason
+      const payload = { 
+        ...existingBooking, 
+        status: newStatus 
+      }
       if (reason) payload.cancellation_reason = reason
 
+      // 3. Send as PUT request with the FULL object attached
       const res = await fetch(`https://sura-rentals-api.onrender.com/api/bookings/${id}/`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
@@ -52,10 +60,14 @@ export default function AdminBookings({ session, cars }) {
         setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus, cancellation_reason: reason } : b))
         setCancelState({ id: null, reason: 'Vehicle under maintenance' }) // reset
       } else {
-        alert("Failed to update booking status.")
+        // If it fails, try to read Django's specific error message to display it
+        const errData = await res.json().catch(() => null)
+        console.error("Django validation error:", errData)
+        alert(`Failed to update booking. Server response: ${JSON.stringify(errData || "Unknown Error")}`)
       }
     } catch (err) {
       console.error(err)
+      alert("Network error. Could not connect to the server.")
     }
   }
 
