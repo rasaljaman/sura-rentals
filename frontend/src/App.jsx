@@ -22,6 +22,8 @@ import MyBookings from './MyBookings'
 import UserProfile from './UserProfile'
 import CarDetails from './CarDetails'
 import AdminBookings from './AdminBookings'
+import UpdatePassword from './UpdatePassword'
+
 
 
 // --- THE MAIN PUBLIC HOMEPAGE COMPONENT ---
@@ -203,6 +205,7 @@ export default function App() {
       <Route path="/profile" element={<UserProfile session={session} cars={cars} />} />
       <Route path="/car/:id" element={<CarDetails cars={cars} session={session} />} />
       <Route path="/admin/bookings" element={<AdminBookings session={session} cars={cars} />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
 
     </Routes>
   )
